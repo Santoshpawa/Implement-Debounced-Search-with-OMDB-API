@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        input{
+            padding : 10px;
+            font-size: 15px;
+            width: 40%;
+        }
+        #container{
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="input" placeholder="Enter Movie Name">
+    <button id="button">Search</button>
+    <button onclick="clearAll()">Clear All</button>
+    <div id="container">
+
+    </div>
+</body>
+</html>
+
+<script>
+    let container = document.getElementById('container');
+    let input = document.getElementById('input');
+    let button = document.getElementById('button');
+    let movies = [];
+    let timer;
+    // eventlistener 
+
+    input.addEventListener('input',()=>{
+        clearTimeout(timer);
+        timer = setTimeout(()=>{
+            getMovies(input.value)
+        },500)
+        
+    })
+    async function getMovies(query){
+        try {
+            let response = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=37a37e7d&s=${query}`);
+            let data = await response.json();
+            movies = data.Search;
+        } catch (error) {
+            let h3 = document.createElement('h3');
+            h3.innerText = "Too many movies";
+            container.append(h3);
+        }
+        if(movies.length){
+            movies.forEach((movie)=>{
+            let h3 = document.createElement('h3');
+            h3.innerText = movie.Title;
+            container.append(h3);
+        })
+        }
+        
+        console.log(movies);
+    }
+
+    function clearAll(){
+        container.innerHTML = '';
+        input.value = "";
+    }
+</script>
